@@ -109,9 +109,9 @@ public class ToolBarRendererBase extends HeaderResourcesRendererBase {
 				}
 			}				
 			
-			writer.startElement(HTML.td_ELEM, component);
-			writer.writeAttribute(HTML.style_ATTRIBUTE, "width:100%", null);
-			writer.endElement(HTML.td_ELEM);
+			//writer.startElement(HTML.td_ELEM, component);
+			//writer.writeAttribute(HTML.style_ATTRIBUTE, "width:100%", null);
+			//writer.endElement(HTML.td_ELEM);
 			
 			for (Iterator<UIComponent> it = childrenToTheRight.iterator(); it.hasNext();) {
 				UIComponent child = it.next();					
