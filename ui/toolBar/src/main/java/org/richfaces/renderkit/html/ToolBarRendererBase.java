@@ -109,9 +109,13 @@ public class ToolBarRendererBase extends HeaderResourcesRendererBase {
 				}
 			}				
 			
-			//writer.startElement(HTML.td_ELEM, component);
-			//writer.writeAttribute(HTML.style_ATTRIBUTE, "width:100%", null);
-			//writer.endElement(HTML.td_ELEM);
+			Boolean generateTd = (Boolean) toolBar.getAttributes().get("generateTd");
+			if(generateTd)
+			{
+				writer.startElement(HTML.td_ELEM, component);
+				writer.writeAttribute(HTML.style_ATTRIBUTE, "width:100%", null);
+				writer.endElement(HTML.td_ELEM);
+			}
 			
 			for (Iterator<UIComponent> it = childrenToTheRight.iterator(); it.hasNext();) {
 				UIComponent child = it.next();					

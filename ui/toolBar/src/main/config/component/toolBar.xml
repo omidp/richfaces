@@ -58,6 +58,15 @@
     	</description>
     </property>
     <property>
+    	<name>generateTd</name>
+    	<classname>boolean</classname>
+    	<description>
+    		<![CDATA[A height of a bar in pixels. If a height is not defined,
+    		a bar height depends of the "headerFontSize" skin parameter.]]>
+    	</description>
+    	<defaultvalue>true</defaultvalue>
+    </property>
+    <property>
     	<name>itemSeparator</name>
     	<classname>java.lang.String</classname>
     	<description>
