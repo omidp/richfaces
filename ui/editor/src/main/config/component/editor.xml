@@ -49,6 +49,14 @@
 			<defaultvalue>"TinyMCE"</defaultvalue>
 		</property>
 		<property>
+			<name>directionality</name>
+			<classname>boolean</classname>
+			<description>
+				
+			</description>
+			<defaultvalue>true</defaultvalue>
+		</property>
+		<property>
 			<name>width</name>
 			<classname>java.lang.Integer</classname>
 			<description>

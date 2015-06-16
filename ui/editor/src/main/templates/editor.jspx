@@ -13,8 +13,10 @@
 	<f:clientid var="clientId"/>
     <h:styles>css/editor.xcss</h:styles>
     <h:scripts>new org.ajax4jsf.javascript.AjaxScript(), new org.ajax4jsf.javascript.PrototypeScript(), scripts/tiny_mce/tiny_mce_src.js, scripts/editor.js</h:scripts>
+    <c:set var="directionality" value="#{component.attributes['directionality']}"/>
     <jsp:scriptlet>
 		<![CDATA[
+		Boolean directionality = (Boolean) variables.getVariable("directionality");
 		    if(shouldRenderTinyMCE(component)) {
     	]]>
 	</jsp:scriptlet>
@@ -33,6 +35,10 @@
 			<f:call name="writeEditorParameters" />
      		
        		var richParams = {extScriptSuffix : '#{this:getSriptMappingSuffix(context)}', extCssSuffix : '#{this:getCssMappingSuffix(context)}', useSeamText : #{component.attributes['useSeamText']}};
+       		
+       		<jsp:scriptlet><![CDATA[ if (directionality) { ]]></jsp:scriptlet>
+			tinyMceParams.directionality = 'rtl';
+       		<jsp:scriptlet><![CDATA[ } ]]></jsp:scriptlet>
        		
         	new RichEditor('#{clientId}', richParams, tinyMceParams);
 		</script>		
