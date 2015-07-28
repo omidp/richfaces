@@ -297,7 +297,11 @@ public class EditorRendererBase extends InputRendererBase {
 		String skin = component.getSkin();
 		Integer width = component.getWidth();
 		Integer height = component.getHeight();
-
+		
+		
+		writer.writeText("tinyMceParams.content_css = "
+					+ ScriptUtils.toScript("css/richEditor.css")+ ";\n", null);					
+		
 		if (theme != null && theme.length() > 0) {
 			writer.writeText("tinyMceParams.theme = "
 					+ ScriptUtils.toScript(theme) + ";\n", null);
