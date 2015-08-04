@@ -298,9 +298,9 @@ public class EditorRendererBase extends InputRendererBase {
 		Integer width = component.getWidth();
 		Integer height = component.getHeight();
 		
-		
+		String cssPath = context.getExternalContext().getRequestContextPath() + "/css/richEditor.css";
 		writer.writeText("tinyMceParams.content_css = "
-					+ ScriptUtils.toScript("css/richEditor.css")+ ";\n", null);					
+					+ ScriptUtils.toScript(cssPath)+ ";\n", null);					
 		
 		if (theme != null && theme.length() > 0) {
 			writer.writeText("tinyMceParams.theme = "
