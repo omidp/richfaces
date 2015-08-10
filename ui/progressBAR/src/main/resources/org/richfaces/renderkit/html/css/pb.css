@@ -1,0 +1,12 @@
+.rich-progress-bar-width {
+    height: 20px;
+    width: 200px;
+}
+
+
+.rich-progress-bar-remained {
+    /*background-color: #fff;
+    text-align: center !important;*/
+    z-index: 9999;
+    color:#000;
+}

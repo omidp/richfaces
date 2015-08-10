@@ -139,7 +139,8 @@ Object.extend(ProgressBar.prototype, {
 			context = this.getContext();
 		}
 		var html = markup.invoke('getContent', context).join('');
-		$(this.id + ":remain").innerHTML = $(this.id + ":complete").innerHTML = html;
+		//$(this.id + ":complete").innerHTML
+		$(this.id + ":remain").innerHTML = html;
 	},
 	interpolate: function (placeholders, context) {
 		for(var k in context) {
@@ -155,8 +156,8 @@ Object.extend(ProgressBar.prototype, {
 		var d = $(this.id + ":remain");
 		if (!d) { return; } 
 		var lbl = this.interpolate(str + "", this.getContext());
-		if (lbl)
-			d.innerHTML = $(this.id + ":complete").innerHTML = lbl;
+		//if (lbl)
+			//d.innerHTML = $(this.id + ":complete").innerHTML = lbl;
 		this.markup = null;
 	},
 	getMode: function () {
