@@ -17,10 +17,6 @@
         <description>
         	The &lt;rich:inplaceInput&gt; is an input component used for displaying and editing data inputted. 
         </description>
-		<facet>
-		   <name>controls</name>
-		   <description>Defines the contols contents. Related attributes are "saveControlIcon" and "cancelControlIcon"</description>
-		</facet>
 		<renderer  generate="true" override="true">
 			<name>org.richfaces.renderkit.InplaceInputRenderer</name>
 			<template>inplaceinput.jspx</template>
@@ -39,7 +35,7 @@
        		<property>
        			<name>layout</name>
        			<classname>java.lang.String</classname>
-       			<description>Defines how the component is displayed in the layout. Possible values are &quot;block&quot;, &quot;inline&quot;. Default value is &quot;inline&quot;. </description>
+       			<description>Defines how the component is displayed in the layout. Possible values are &quot;block&quot;, &quot;inline&quot;. . Default value is &quot;inline&quot;. </description>
        			<defaultvalue><![CDATA["inline"]]></defaultvalue>
        		</property>
        		<property>
@@ -81,7 +77,7 @@
 		  	<property>
 		  		<name>controlsVerticalPosition</name>
 		  		<classname>java.lang.String</classname>
-		  		<description>Positions the controls vertically. Possible values are &quot;bottom&quot;,&quot;center&quot; and &quot;top&quot;. Default value is &quot;center&quot;</description>
+		  		<description>Positions the controls vertically. Possible values are &quot;bottom&quot;, &quot;top&quot;</description>
 		  		<defaultvalue><![CDATA["center"]]></defaultvalue>
 		  	</property>
 		  	
@@ -105,12 +101,12 @@
 		  	<property>
 		  		<name>oneditactivated</name>
 		  		<classname>java.lang.String</classname>
-		  		<description>HTML: script expression; edit state is activated</description>
+		  		<description>Provides a possibility  to assign JavaScript to be executed when edit state is activated</description>
 		  	</property>
 		  	<property>
 		  		<name>onviewactivated</name>
 		  		<classname>java.lang.String</classname>
-		  		<description>HTML: script expression; view state is activated</description>
+		  		<description>Provides a possibility to assign JavaScript to be executed when view state is activated</description>
 		  	</property>
 		  	<property>
 		  		<name>selectOnEdit</name>
@@ -250,19 +246,28 @@
         		<classname>java.lang.String</classname>
         		<description>HTML: script expression; a pointer button is released</description>
     		</property>
-			<property>
-				<name>label</name>
-				<classname>java.lang.String</classname>
-				<description>A localized user presentable name for this component.</description>
-			</property>
-		    <property>
-		        <name>maxlength</name>
-		        <classname>int</classname>
-		        <description>Specifies the maximum number of digits that could be entered into the input field. 
-				The maximum number is unlimited by default. 
-				</description>
-		    </property>
-			&html_events;
+       		<property>
+       			<name>converterMessage</name>
+       			<classname>java.lang.String</classname>
+       			<description>
+       				A ValueExpression enabled attribute that, if present, will be used as the text of the converter message, replacing any message that comes from the converter
+       			</description>
+       		</property>
+       		<property>
+       			<name>requiredMessage</name>
+       			<classname>java.lang.String</classname>
+       			<description>
+       				A ValueExpression enabled attribute that, if present, will be used as the text of the validation message for the "required" facility, if the "required" facility is used
+       			</description>
+       		</property>
+       		<property>
+       			<name>validatorMessage</name>
+       			<classname>java.lang.String</classname>
+       			<description>
+       				A ValueExpression enabled attribute that, if present, will be used as the text of the validator message, replacing any message that comes from the validator
+       			</description>
+       		</property>	
+		  	&html_events;
 		  	&ui_input_attributes;
 		  	<property hidden="true">
         		<name>localValueSet</name>

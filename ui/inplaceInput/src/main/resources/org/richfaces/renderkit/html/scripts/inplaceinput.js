@@ -1,14 +1,10 @@
-if(!window.LOG){
-	window.LOG = {warn:function(){}};
-}
-
 if (!window.Richfaces) window.Richfaces = {};
 Richfaces.InplaceInput = Class.create();
 
 
 Richfaces.InplaceInput.prototype = {
 	//TODO: remove $$$$$
-	initialize: function(clientId, temValueKeepId, valueKeepId, tabberId, attributes, events, userStyles, commonStyles, barParams) {
+	initialize: function(clientId, temValueKeepId, valueKeepId, tabberId, attributes, events, classes, barParams) {
 		//TODO: delete tabberId from parameters
 		this.inplaceInput = $(clientId);
 		this.inplaceInput.component = this;
@@ -17,7 +13,8 @@ Richfaces.InplaceInput.prototype = {
 		this.valueKeeper = $(valueKeepId);
 		this.attributes = attributes;
 		this.events = events;
-		 
+		
+		this.classes = classes;
 		//TODO: static methods are preferred to be called within constructor
 		this.currentText = this.getCurrentText();
 		this.value = this.valueKeeper.value;
@@ -38,7 +35,6 @@ Richfaces.InplaceInput.prototype = {
 		
 		this.initHandlers();	
 		this.initEvents();
-		this.classes = Richfaces.mergeStyles(userStyles,commonStyles.getCommonStyles());
 		this["rich:destructor"] = "destroy";
 		
 		this.skipSwitching = false;
@@ -62,18 +58,9 @@ Richfaces.InplaceInput.prototype = {
 		if (this.bar) {
 			if (this.bar.ok) {
 				this.bar.ok.observe("mousedown", function(e){this.okHandler(e);}.bindAsEventListener(this));			
-			
-				if (Richfaces.browser.isOpera) {
-					this.bar.ok.observe("click", Event.stop); 
-				}
 			}
-			
 			if (this.bar.cancel) {
 				this.bar.cancel.observe("mousedown", function(e){this.cancelHandler(e)}.bindAsEventListener(this));
-
-				if (Richfaces.browser.isOpera) {
-					this.bar.cancel.observe("click", Event.stop); 
-				}
 			}
 		}
 	},
@@ -94,12 +81,12 @@ Richfaces.InplaceInput.prototype = {
 		//TODO: Nick recommends regexp
 		var className = this.inplaceInput.className; 
 		if (this.currentState == Richfaces.InplaceInput.STATES[0]) {
-			if (className.indexOf(this.classes.component.view.hovered) == -1) {
-				className += " " + this.classes.component.view.hovered;
+			if (className.indexOf(this.classes.COMPONENT.VIEW.HOVERED) == -1) {
+				className += " " + this.classes.COMPONENT.VIEW.HOVERED;
 			}
 		} else if (this.currentState == Richfaces.InplaceInput.STATES[2]) {
-			if (className.indexOf(this.classes.component.changed.hovered) == -1) { 
-				className += " " + this.classes.component.changed.hovered;
+			if (className.indexOf(this.classes.COMPONENT.CHANGED.HOVERED) == -1) { 
+				className += " " + this.classes.COMPONENT.CHANGED.HOVERED;
 			}	 
 		}
 		this.inplaceInput.className = className;
@@ -107,9 +94,9 @@ Richfaces.InplaceInput.prototype = {
 	
 	inplaceMouseOutHandler : function(e) {
 		if (this.currentState == Richfaces.InplaceInput.STATES[0]) {
-			this.inplaceInput.className = this.classes.component.view.normal;
+			this.inplaceInput.className = this.classes.COMPONENT.VIEW.NORMAL;
 		} else if (this.currentState == Richfaces.InplaceInput.STATES[2]) {
-			this.inplaceInput.className = this.classes.component.changed.normal; 
+			this.inplaceInput.className = this.classes.COMPONENT.CHANGED.NORMAL; 
 		}
 	},
 	
@@ -130,7 +117,7 @@ Richfaces.InplaceInput.prototype = {
 	},
 	
 	edit: function (){
-		if (Richfaces.invokeEvent(this.events.oneditactivation, this.inplaceInput, "rich:oneditactivation", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value})) {
+		if (this.invokeEvent(this.events.oneditactivation, this.inplaceInput, "rich:oneditactivation", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value})) {
 			this.startEditableState();
 			if (this.events.oneditactivated) {
 				this.inplaceInput.fire("rich:oneditactivated", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value});
@@ -138,7 +125,7 @@ Richfaces.InplaceInput.prototype = {
 		}
 	},
 	
-	tmpValueBlurHandler : function(e) {
+	tmpValueBlurHandler : function() {
 		if (this.skipBlur) {
 			this.skipBlur = false;
 			return;
@@ -150,7 +137,7 @@ Richfaces.InplaceInput.prototype = {
 		}
 		
 		if (!this.attributes.showControls) {
-			this.save(e);
+			this.save();
 		}
 	},
 	
@@ -174,14 +161,14 @@ Richfaces.InplaceInput.prototype = {
 				break;
 			case Event.KEY_TAB :
 				if (this.attributes.showControls) {
-					this.save(e);
+					this.save();
 				}
 				break;
 		}
 	},
 	
 	okHandler : function(e) {
-		this.save(e);
+		this.save();
 		Event.stop(e);
 	},
 	
@@ -196,13 +183,11 @@ Richfaces.InplaceInput.prototype = {
 	
 	endEditableState : function() {
 		//this.inplaceInput.style.position = "";
-		
 		if (this.bar) {
 			this.bar.hide();
 		}
 		
 		this.tempValueKeeper.style.clip = 'rect(0px 0px 0px 0px)';
-		this.tempValueKeeper.blur();
 	},
 	
 	/*endChangedState : function() {
@@ -219,7 +204,7 @@ Richfaces.InplaceInput.prototype = {
 		var inputSize = this.setInputWidth(textWidth);
 		
 		this.tempValueKeeper.style.clip = 'rect(auto auto auto auto)';
-		this.inplaceInput.className = this.classes.component.editable;
+		this.inplaceInput.className = this.classes.COMPONENT.EDITABLE;
 		
 		if (this.bar) {
 			this.bar.show(inputSize, this.tempValueKeeper.offsetHeight);
@@ -236,7 +221,7 @@ Richfaces.InplaceInput.prototype = {
 		this.changeState(Richfaces.InplaceInput.STATES[0]);
 		
 		this.createNewText(this.currentText);
-		this.inplaceInput.className = this.classes.component.view.normal;
+		this.inplaceInput.className = this.classes.COMPONENT.VIEW.NORMAL;
 		//TODO: see above
 		this.inplaceInput.observe("mouseover", function(e){this.inplaceMouseOverHandler(e);}.bindAsEventListener(this));
 	},
@@ -247,7 +232,7 @@ Richfaces.InplaceInput.prototype = {
 		this.changeState(Richfaces.InplaceInput.STATES[2]);
 		
 		this.createNewText(this.currentText);
-		this.inplaceInput.className = this.classes.component.changed.normal;
+		this.inplaceInput.className = this.classes.COMPONENT.CHANGED.NORMAL;
 	},
 	
 	/**
@@ -260,10 +245,7 @@ Richfaces.InplaceInput.prototype = {
 		if (this.currentState != 1) {
 			return;
 		}
-		
-		
 		var width = parseInt(this.attributes.inputWidth);
-		
 		if (!width) {
 			var max = parseInt(this.attributes.maxInputWidth);
 			var min = parseInt(this.attributes.minInputWidth);
@@ -275,7 +257,6 @@ Richfaces.InplaceInput.prototype = {
 				width = textWidth;
 			}
 		}
-		
 		this.tempValueKeeper.style.width = width + "px";
 		return width;
 	},
@@ -286,7 +267,7 @@ Richfaces.InplaceInput.prototype = {
 	},
 	
 	cancel : function(e, value) {
-		if (Richfaces.invokeEvent(this.events.onviewactivation, this.inplaceInput, "rich:onviewactivation", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value})) {
+		if (this.invokeEvent(this.events.onviewactivation, this.inplaceInput, "rich:onviewactivation", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value})) {
 			this.endEditableState();
 			if (!value) {
 				value = this.valueKeeper.value;	
@@ -311,8 +292,8 @@ Richfaces.InplaceInput.prototype = {
 		}
 	},
 	
-	save : function(e) {
-		if (Richfaces.invokeEvent(this.events.onviewactivation, this.inplaceInput, "rich:onviewactivation", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value})) {
+	save : function() {
+		if (this.invokeEvent(this.events.onviewactivation, this.inplaceInput, "rich:onviewactivation", {oldValue : this.valueKeeper.value, value : this.tempValueKeeper.value})) {
 			var userValue = this.tempValueKeeper.value;
 			this.setValue(userValue);
 			if (this.events.onviewactivated) {
@@ -321,51 +302,59 @@ Richfaces.InplaceInput.prototype = {
 		}	
 	},
 	
-	getParameters : function(event, params, paramName) {
-		
-		if (!params) {
-			params = event;
-		}
-		if (params && params[paramName]) {
-			return params[paramName];
-		} 
-		return params;
-	},
-	
-	setValue : function(e, param) {
+	setValue : function(userValue) {
 		var value = this.valueKeeper.value;
-		var userValue = this.getParameters(e,param,"value");
-		var proceed = true;
-		
-		if(value != userValue) {
-			proceed = Richfaces.invokeEvent(this.events.onchange, this.inplaceInput, "onchange", userValue);	
-		} 
-		
-		if (proceed) {
-			this.tempValueKeeper.value = userValue;
-			this.endEditableState();
-			if (userValue.blank()) {
-				this.setDefaultText();
-				this.valueKeeper.value = "";
-			} else {
-				this.currentText = userValue;
-				this.valueKeeper.value = userValue;
-			}
-		
-			if (userValue != this.value) {
-				this.startChangedState();
-			} else {
-				this.startViewState();
-			}
+		this.endEditableState();
+			
+		if (userValue.blank()) {
+			this.setDefaultText();
+			this.valueKeeper.value = "";
 		} else {
-			this.cancel();
-		}	
+			this.currentText = userValue;
+			this.valueKeeper.value = userValue;
+		}
+			
+		if (userValue != this.value) {
+			this.startChangedState();
+		} else {
+			this.startViewState();
+		}
 	},
 	
 	getValue : function() {
 		return this.valueKeeper.value;
 	},
 
+	//TODO: remove Bucks
+	//TODO: to shared library
+	invokeEvent : function(eventFunc, element, eventName, memo) {
+		var result;
+		if (eventFunc) {
+			element = $(element);
+      		if (element == document && document.createEvent && !element.dispatchEvent)
+        		element = document.documentElement;
+
+      		var event;
+      		if (document.createEvent) {
+        		event = document.createEvent("HTMLEvents");
+        		event.initEvent("dataavailable", true, true);
+     	 	} else {
+        		event = document.createEventObject();
+        		event.eventType = "ondataavailable";
+      		}
+
+      		event.eventName = eventName;
+      		event.rich = {component:this};
+     		event.memo = memo || { };
+			try {
+				result = eventFunc.call(element,event);
+			}
+			catch (e) { LOG.warn("Exception: "+e.Message + "\n[on"+eventName + "]"); }	
+		}
+		if (result!=false) result = true;
+		return result;
+	},
+	
 	setDefaultText : function() {
 		this.currentText = this.attributes.defaultLabel;
 	},

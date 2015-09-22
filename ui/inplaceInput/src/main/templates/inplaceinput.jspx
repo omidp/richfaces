@@ -15,12 +15,11 @@
 	<h:scripts>
 			new org.ajax4jsf.javascript.PrototypeScript(),
 			scripts/comboboxUtils.js,
-			scripts/utils.js,
 			scripts/inplaceinput.js,
-			scripts/inplaceinputstyles.js
+			scripts/utils.js
 	</h:scripts>
-	<f:resource var="saveIcon" name="org.richfaces.renderkit.html.images.SaveControlIcon"/>
-	<f:resource var="cancelIcon" name="org.richfaces.renderkit.html.images.CancelControlIcon"/>
+	<f:resource	name="/org/richfaces/renderkit/html/images/saveControlIcon.png" var="saveControlIcon" />
+	<f:resource	name="/org/richfaces/renderkit/html/images/cancelControlIcon.png" var="cancelControlIcon" />
 	<f:resource var="spacer" name="images/spacer.gif"/>
 		
  	
@@ -47,12 +46,12 @@
 	   	
 	   	String saveIcon =  (String)component.getAttributes().get("saveControlIcon");
 	   	if (saveIcon != null && saveIcon.length() != 0 ) {
-	   		variables.setVariable("saveIcon", org.richfaces.component.util.ViewUtil.getResourceURL(saveIcon ,context));
+	   		variables.setVariable("saveIcon", getResource(saveIcon).getUri(context, component));
 	   	}
 	   	
 	   	String cancelIcon =  (String)component.getAttributes().get("cancelControlIcon");
 	   	if (cancelIcon != null && cancelIcon.length() != 0 ) {
-	   		variables.setVariable("cancelIcon", org.richfaces.component.util.ViewUtil.getResourceURL(cancelIcon ,context));
+	   	    variables.setVariable("cancelIcon", getResource(cancelIcon).getUri(context, component));
 	   	}
 	   	
 	   	String controlClass = (String)component.getAttributes().get("controlClass");
@@ -61,22 +60,6 @@
 	   	variables.setVariable("controlHoverClass", controlHoverClass);
 	   	String controlPressedClass = (String)component.getAttributes().get("controlPressedClass"); 
 	   	variables.setVariable("controlPressedClass", controlPressedClass);
-	   	
-	   	String styleClass = (String)component.getAttributes().get("styleClass");
-	   	styleClass = styleClass != null ? styleClass.trim() : "";
-	   	variables.setVariable("styleClass", styleClass);
-	   	
-	   	String changedClass = (String)component.getAttributes().get("changedClass");
-	   	changedClass = (changedClass != null ? changedClass.trim() : "") + " " + styleClass;
-	   	variables.setVariable("changedClass", changedClass);
-	   	
-	   	String viewClass = (String)component.getAttributes().get("viewClass");
-	   	viewClass = (viewClass != null ? viewClass.trim() : "") + " " + styleClass;
-	   	variables.setVariable("viewClass", viewClass);
-	   	
-	   	String editClass = (String)component.getAttributes().get("editClass");
-	   	editClass = (editClass != null ? editClass.trim() : "") + " " + styleClass;
-	   	variables.setVariable("editClass", editClass);
 		
 	   	String layout = (String)component.getAttributes().get("layout");
 	   	if (layout != null && layout.length() != 0) {
@@ -91,12 +74,12 @@
 	   		   	
 	   	]]>
 	</jsp:scriptlet>
-		<span id="#{clientId}" class='rich-inplace rich-inplace-input rich-inplace-view #{viewClass}'
+		<span id="#{clientId}" class='rich-inplace rich-inplace-view #{component.attributes["styleClass"]}'
 			  x:passThruWithExclusions="id,styleClass,class" style="zoom: 1; #{component.attributes['style']}">
 	<jsp:scriptlet>
 	   	} else {
 	</jsp:scriptlet>
-		<div id="#{clientId}" class='rich-inplace rich-inplace-input rich-inplace-view #{viewClass}'
+		<div id="#{clientId}" class='rich-inplace rich-inplace-view #{component.attributes["viewClass"]} #{component.attributes["styleClass"]}'
 			  x:passThruWithExclusions="id,styleClass,class" style="zoom: 1; #{component.attributes['style']}">
 	<jsp:scriptlet>
 	   	} 
@@ -108,6 +91,7 @@
 			   type='text'
 			   autocomplete="off"
 			   value='#{fieldValue}'
+			   onchange='#{component.attributes["onchange"]}'
 			   onselect='#{component.attributes["onselect"]}'
 			   onblur='#{component.attributes["onblur"]}'
 			   onfocus='#{component.attributes["onfocus"]}'
@@ -121,7 +105,7 @@
 			   onmouseout='#{component.attributes["oninputmouseout"]}'
 			   onmouseover='#{component.attributes["oninputmouseover"]}'
 			   onmouseup='#{component.attributes["oninputmouseup"]}'
-			   maxlength='#{component.attributes["maxlength"]}'
+			   
 			   />
 		<input id='#{clientId}value' name='#{clientId}' type='hidden' value='#{fieldValue}'/>
 		<div id="#{clientId}bar" class="rich-inplace-input-controls-set" style="display:none;">
@@ -137,18 +121,18 @@
 					<tbody>
 						<tr>
 							<td class="rich-inplace-shadow-tl">
-								<img width="10" height="1" style="border:0" alt="" src="#{spacer}"/>
+								<img width="10" height="1" border="0" alt="" src="#{spacer}"/>
 							</td>
 							<td class="rich-inplace-shadow-tr">
-								<img width="1" height="10" style="border:0" alt="" src="#{spacer}"/>
+								<img width="1" height="10" border="0" alt="" src="#{spacer}"/>
 							</td>
 						</tr>
 						<tr>
 							<td class="rich-inplace-shadow-bl">
-								<img width="1" height="10" style="border:0" alt="" src="#{spacer}"/>
+								<img width="1" height="10" border="0" alt="" src="#{spacer}"/>
 							</td>
 							<td class="rich-inplace-shadow-br">
-								<img width="10" height="1" style="border:0" alt="" src="#{spacer}"/>
+								<img width="10" height="1" border="0" alt="" src="#{spacer}"/>
 							</td>
 						</tr>
 					</tbody>
@@ -180,24 +164,10 @@
 		
 			#{this:encodeScriptAttributes(context, component)};
 			#{this:encodeScriptEvents(context, component)};
-						
-			var inplaceInputUserStyles = {
-					component:{
-						view :{
-							normal:'#{viewClass}', 
-							hovered:'#{component.attributes["viewHoverClass"]}' 
-						},
-						changed:{
-							normal:'#{changedClass}',
-							hovered:'#{component.attributes["changedHoverClass"]}'
-						},
-						editable:'#{editClass}'
-						 
-					}
-			};
+			#{this:encodeInplaceInputCss(context, component)};
 		
 			var inplaceInput = new Richfaces.InplaceInput('#{clientId}', '#{clientId}tempValue', '#{clientId}value', '#{clientId}tabber', 
-													  attributes, events, inplaceInputUserStyles, new Richfaces.InplaceInputStyles(), ['#{clientId}bar', 
+													  attributes, events, classes, ['#{clientId}bar', 
 													  '#{clientId}ok', '#{clientId}cancel', '#{clientId}buttons','#{clientId}btns_shadow']);
 		</script>			
 		</div>

@@ -30,6 +30,7 @@ import javax.faces.convert.ConverterException;
 import org.ajax4jsf.javascript.JSFunctionDefinition;
 import org.ajax4jsf.javascript.ScriptUtils;
 import org.ajax4jsf.renderkit.HeaderResourcesRendererBase;
+import org.ajax4jsf.renderkit.RendererUtils;
 import org.ajax4jsf.util.InputUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,10 +47,71 @@ public class InplaceInputBaseRenderer extends HeaderResourcesRendererBase {
     private static Log logger = LogFactory.getLog(InplaceInputBaseRenderer.class);
     
     private static final String CONTROLS_FACET = "controls";
-         
+     
+    private static final String INPLACE_COMPONENT = "COMPONENT"; 
+    
+    private static final String INPLACE_CHANGED = "CHANGED"; 
+
+    private static final String INPLACE_VIEW = "VIEW"; 
+
+    private static final String INPLACE_EDITABLE = "EDITABLE"; 
+    
+    private static final String INPLACE_NORMAL = "NORMAL";
+    
+    private static final String INPLACE_HOVERED = "HOVERED";
+    
+    private static final String INPLACE_CSS_PUBLIC = "rich-inplace";
+    
+    private static final String INPLACE_CSS_VIEW = "view";
+
+    private static final String INPLACE_CSS_EDITABLE = "edit";
+    
+    private static final String INPLACE_CSS_CHANGE = "changed";
+    
+    private static final String INPLACE_CSS_HOVER = "hover";
+    
     private static final String EMPTY_DEFAULT_LABEL = "\u00a0\u00a0\u00a0";
     
-        	
+    private static enum States {
+	NORMAL {String createCss(UIComponent component, String suffix){
+	    StringBuilder builder = new StringBuilder();
+	    builder.append(INPLACE_CSS_PUBLIC);
+	    builder.append(" ");
+	    builder.append(INPLACE_CSS_PUBLIC + "-" + suffix);
+	    Object value = component.getAttributes().get(suffix + "Class");
+	    if (value != null) {
+		builder.append(" ");
+		builder.append(value);
+	    }
+	    return builder.toString();
+	};},
+	HOVERED {String createCss(UIComponent component , String suffix){
+	    StringBuilder builder = new StringBuilder();
+	    builder.append(INPLACE_CSS_PUBLIC + "-" + "input-" + suffix + "-" + INPLACE_CSS_HOVER);
+	    Object value = component.getAttributes().get(suffix + "HoverClass");
+	    if (value != null) {
+		builder.append(" ");
+		builder.append(value);
+	    }
+	    return builder.toString();
+	}},
+	EDIT {String createCss(UIComponent component, String suffix){
+	    StringBuilder builder = new StringBuilder();
+	    builder.append(INPLACE_CSS_PUBLIC);
+	    builder.append(" ");
+	    builder.append(INPLACE_CSS_PUBLIC + "-" + suffix);
+	    Object value = component.getAttributes().get(suffix + "Class");
+	    if (value != null) {
+		builder.append(" ");
+		builder.append(value);
+	    }
+	    return builder.toString();
+	}};
+	abstract String createCss(UIComponent component, String suffix);		
+    };
+    
+
+    	
     protected Class<? extends UIComponent>  getComponentClass() {
 	return UIInplaceInput.class;
     }
@@ -143,12 +205,39 @@ public class InplaceInputBaseRenderer extends HeaderResourcesRendererBase {
     	options.addEventHandler("onviewactivation");
     	options.addEventHandler("oneditactivated");
     	options.addEventHandler("onviewactivated");
-    	options.addEventHandler("onchange");
     	events.append(options.toScript());
     	
     	return events.toString();
     }
         
+    public String encodeInplaceInputCss(FacesContext context, UIComponent component) {
+	StringBuilder cssMap = new StringBuilder();
+    	cssMap.append("var classes = ");
+    	
+    	ScriptOptions mainMap = new ScriptOptions(component);
+    	ScriptOptions componentClasses = new ScriptOptions(component);
+    	ScriptOptions changedClasses = new ScriptOptions(component);
+    	ScriptOptions viewClasses = new ScriptOptions(component);
+   	
+    	changedClasses.addOption(INPLACE_NORMAL, createCss(component, States.NORMAL, INPLACE_CSS_CHANGE) );
+    	changedClasses.addOption(INPLACE_HOVERED, createCss(component,States.HOVERED, INPLACE_CSS_CHANGE));
+    	
+    	viewClasses.addOption(INPLACE_NORMAL, createCss(component, States.NORMAL, INPLACE_CSS_VIEW) );;
+    	viewClasses.addOption(INPLACE_HOVERED, createCss(component,States.HOVERED, INPLACE_CSS_VIEW));
+  	    	
+    	componentClasses.addOption(INPLACE_CHANGED,changedClasses);
+    	componentClasses.addOption(INPLACE_VIEW, viewClasses);
+    	componentClasses.addOption(INPLACE_EDITABLE,createCss(component, States.EDIT, INPLACE_CSS_EDITABLE));
+    	
+    	mainMap.addOption(INPLACE_COMPONENT, componentClasses);
+    	cssMap.append(mainMap.toString());
+    	return cssMap.toString(); 
+	}
+    
+    private String createCss(UIComponent component, States state, String suffix) {
+	return state.createCss(component, suffix);
+    }
+    
     public String getAsEventHandler(FacesContext context, UIComponent component, String attributeName) {
 	JSFunctionDefinition script = getUtils().getAsEventHandler(context, component, attributeName, null);  
 	return ScriptUtils.toScript(script);
